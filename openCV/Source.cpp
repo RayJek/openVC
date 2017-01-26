@@ -12,7 +12,7 @@ using namespace cv;
 int main(int argc, char** argv) {
 	
 	
-	VideoCapture cap(0);
+	VideoCapture cap(-1);
 	
 
 
