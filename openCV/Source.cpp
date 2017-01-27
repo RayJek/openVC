@@ -26,10 +26,12 @@ int main(int argc, char** argv) {
 		Mat  edges;
 		Mat frame;
 		Mat contours;
+		Mat seeline;
 		cap >> frame;
-
+		seeline = Mat::zeros(Size(200, 300), CV_8UC3);
+		line(frame, Point(0, 50), Point(200, 50), Scalar(0, 255, 0), 2, 8, 0);
 		imshow("norml", frame);
-		
+
 		cvtColor(frame, edges, COLOR_BGR2GRAY);
 		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
 		Canny(edges, edges, 0, 30, 3);
