@@ -4,7 +4,7 @@
 #include <opencv2/highgui.hpp> 
 #include <stdlib.h>
 #include <stdio.h>
-
+#include "opencv2/imgcodecs.hpp"
 
 
 
@@ -12,9 +12,7 @@ using namespace std;
 using namespace cv;
 
 int main(int argc, char** argv) {
-
-
-
+	
 	VideoCapture cap(-1);
 
 
@@ -24,36 +22,52 @@ int main(int argc, char** argv) {
 		cout << "Brak kamerki" << endl;
 		return -1;
 	}
+	Mat frame;
+	cap >> frame;
+
 	do {
-
-		
-		Mat  edges;
-		Mat frame;
-		Mat contours;
-		Mat seeline;
-		cap >> frame;
-
-		//rysowanie lini
-		seeline = Mat::zeros(Size(100, 100), CV_8UC3);
-		line(frame, Point(0, 50), Point(320, 50), Scalar(0, 255, 0), 4, 18, 0);
-		//standardowy obraz
-		imshow("norml", frame);
+	
+	
+	Mat gray;
 
 
+	if (frame.channels() == 3)
+	{
+		cvtColor(frame, gray, CV_BGR2GRAY);
+	}
+	else
+	{
+		gray = frame;
+	}
 
-		// znieksztalcnie
-		cvtColor(frame, edges, COLOR_BGR2GRAY);
-		GaussianBlur(edges, edges, Size(7, 7), 1.5, 1.5);
-		Canny(edges, edges, 0, 30, 3);
-		//okno 1
-		imshow("edges", edges);
+	adaptiveThreshold(~gray, gray, 255, CV_ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+	Mat vertical = gray.clone();
+	int horizontalsize = gray.cols / 30;
 
-		//mniejsze szumy
-		Canny(frame, contours, 50, 350);
-		Mat contoursInv;
-		threshold(contours, contoursInv, 128, 255, THRESH_BINARY_INV);
-		//okno 2
-		imshow("line", contours);
+
+	//Detekcja Pionowa
+	Mat structure = getStructuringElement(MORPH_RECT, Size(horizontalsize, 1));
+
+	erode(gray, gray, structure, Point(-1, -1));
+	dilate(gray, gray, structure, Point(-1, -1));
+
+	imshow("Pionowe", gray);
+	imwrite("../data/PionowaLinia.jpg", gray);
+
+
+	//Detekcja Pozioma
+	int verticalsize = vertical.rows / 30;
+
+	Mat verticalStructure = getStructuringElement(MORPH_RECT, Size(1, verticalsize));
+
+	erode(vertical, vertical, verticalStructure, Point(-1, -1));
+	dilate(vertical, vertical, verticalStructure, Point(-1, -1));
+
+	imshow("Poziome", vertical);
+	imwrite("../data/PoziomaLinia.jpg", vertical);
+
+
+
 
 	} while ((waitKey(1) & 0x0ff) != 27);
 
