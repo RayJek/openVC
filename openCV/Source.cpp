@@ -93,7 +93,7 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 						Point_<double> c = approx[2].y;
 						Point_<double> d = approx[3].y;
 
-						if((approx[0].x - approx[2].x) < (approx[1].y - approx[3].y))
+						if((approx[0].x - approx[2].x) > (approx[0].y - approx[3].y))
 						{
 							cout << "Pionowy" << endl;
 						}
@@ -122,7 +122,7 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 
 					}
 					
-					if (maxCosine < 0.10)
+					if (maxCosine < 0.05)
 						squares.push_back(approx);
 				
 					
