@@ -9,6 +9,7 @@
 using namespace std;
 using namespace cv;
 
+
 int thresh = 50, N = 11;
 const char* wndname = "OBRAZ";
 
@@ -20,6 +21,8 @@ static double angle(Point pt1, Point pt2, Point pt0)
 	double dy2 = pt2.y - pt0.y;
 	return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
+	
+
 
 static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 {
@@ -49,15 +52,20 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 			}
 			else
 			{
-				// apply threshold if l!=0:
-				//     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
+				//    apply threshold if l!=0:
+				//    tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
 				gray = gray0 >= (l + 1) * 255 / N;
 			}
+		
+//#############################################################################################################
 
 			findContours(gray, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
 
 			vector<Point> approx;
-
+			
+			
+				
+			
 			for (size_t i = 0; i < contours.size(); i++)
 			{
 
@@ -72,17 +80,77 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 
 					for (int j = 2; j < 5; j++)
 					{
+
 						double cosine = fabs(angle(approx[j % 4], approx[j - 2], approx[j - 1]));
+						maxCosine = MAX(maxCosine, cosine);
+
+					}
+					approx.size();
+					{
+						int g;
+						Point_<int> a = approx[0];
+						Point_<int> b = approx[1];
+						Point_<int> c = approx[2];
+						Point_<int> d = approx[3];
+						
+						approx.size();
+						
+
+						/*cout << "a" << a << endl;
+						cout << "b" << b << endl;
+						cout << "c" << c << endl;
+						cout << "d" << d << endl;*/
+						
+						cout << a + d<<endl;
+						cout << a + b<<endl;
+						
+
+
+					}
+					
+					if (maxCosine < 0.05)
+						squares.push_back(approx);
+				
+					
+
+					}
+				}
+			}
+//##############################################################################################################			
+			/*findContours(gray, contours, RETR_LIST, CHAIN_APPROX_SIMPLE);
+			vector<Point> checkapp;
+
+			for (size_t i = 0; i < contours.size(); i++)
+			{
+
+				approxPolyDP(Mat(contours[i]), checkapp, arcLength(Mat(contours[i]), true)*0.02, true);
+
+
+				if (checkapp.size() == 4 &&
+					fabs(contourArea(Mat(checkapp))) > 1000 &&
+					isContourConvex(Mat(checkapp)))
+				{
+					double maxCosine = 0;
+
+					for (int j = 2; j < 5; j++)
+					{
+						double cosine = fabs(angle(checkapp[j % 4], checkapp[j - 2], checkapp[j - 1]));
 						maxCosine = MAX(maxCosine, cosine);
 					}
 
 					if (maxCosine < 0.3)
-						squares.push_back(approx);
+						squares.push_back(checkapp);
+					
+					cout << "Jest Poziomy" << endl;
 				}
-			}
+			}*/
+
+
+
+
 		}
 	}
-}
+
 
 
 // the function draws all the squares in the image
@@ -93,8 +161,11 @@ static void drawSquares(Mat& image, const vector<vector<Point> >& squares)
 		const Point* p = &squares[i][0];
 		int n = (int)squares[i].size();
 		polylines(image, &p, &n, 1, true, Scalar(0, 255, 0), 3, LINE_AA);
+		
 	}
 
+	
+						
 	imshow(wndname, image);
 }
 
@@ -109,29 +180,32 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	Mat frame;
-	namedWindow("pionowe", 1);
 	do {
 
-		Mat gray;
+		
 
-		bool bSuccess = cap.read(frame); // wczytanie frame
-
-		if (!bSuccess) // przerwanie pêtli 
+		bool bSuccess = cap.read(frame); 
+		if (!bSuccess) 
 		{
 			cout << "brak kamerki" << endl;
 			break;
 		}
 
-
-
 		namedWindow(wndname, 1);
 		vector<vector<Point> > squares;
+		//vector<Point>  squarescheck;
+		//squarescheck.push_back(Point(1, 2));
+		//squarescheck.push_back(Point(1, 2));
 
-
+		
+		
+		//double poziomy(cv::Point2f punt1, cv::Point2f punt2);
+		
 
 		findSquares(frame, squares);
 		drawSquares(frame, squares);
-
+		
+	
 		
 
 	} while ((waitKey(1) & 0x0ff) != 27);
