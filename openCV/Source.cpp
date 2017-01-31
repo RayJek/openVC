@@ -21,7 +21,7 @@ static double angle(Point pt1, Point pt2, Point pt0)
 	double dy2 = pt2.y - pt0.y;
 	return (dx1*dx2 + dy1*dy2) / sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
-	
+
 
 
 static void findSquares(const Mat& image, vector<vector<Point> >& squares)
@@ -87,22 +87,36 @@ static void findSquares(const Mat& image, vector<vector<Point> >& squares)
 					}
 					approx.size();
 					{
-						int g;
-						Point_<int> a = approx[0];
-						Point_<int> b = approx[1];
-						Point_<int> c = approx[2];
-						Point_<int> d = approx[3];
 						
-						approx.size();
+						Point_<double> a = approx[0].x;
+						Point_<double> b = approx[1].x;
+						Point_<double> c = approx[2].y;
+						Point_<double> d = approx[3].y;
+
+						if((approx[0].x - approx[1].x) < (approx[2].y - approx[3].y))
+						{
+							cout << "Pionowy" << endl;
+						}
+						else
+							cout << "Poziomy" << endl;
 						
 
+						
+		
 						/*cout << "a" << a << endl;
 						cout << "b" << b << endl;
 						cout << "c" << c << endl;
 						cout << "d" << d << endl;*/
+
+						/*if (bokb < boka)
+						{
+							cout << "Poziomy" << endl;
+						}
+						else
+							cout << "pionowy" << endl;*/
 						
-						cout << a + d<<endl;
-						cout << a + b<<endl;
+						/*cout << a + d<<endl;
+						cout << a + b<<endl;*/
 						
 
 
